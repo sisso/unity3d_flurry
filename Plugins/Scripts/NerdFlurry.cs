@@ -165,10 +165,13 @@ public class NerdFlurry {
 	
 	public void StartSession(string API_KEY)
 	{
-		NerdFlurry_setDebugLogEnabled(true);
-		NerdFlurry_setShowErrorInLogEnabled(true);
-		NerdFlurry_setEventLoggingEnabled(true);
-		NerdFlurry_startSession(API_KEY);
+		if(Application.platform==RuntimePlatform.IPhonePlayer) 
+		{
+			NerdFlurry_setDebugLogEnabled(true);
+			NerdFlurry_setShowErrorInLogEnabled(true);
+			NerdFlurry_setEventLoggingEnabled(true);
+			NerdFlurry_startSession(API_KEY);
+		}
 	}
 	
 	public void EndSession()
@@ -178,42 +181,59 @@ public class NerdFlurry {
 	
 	public int GetAgentVersion()
 	{	
-		/*string version = NerdFlurry_getFlurryAgentVersion();
-		Debug.Log("version is "+version);
-		if(version!=null)
-			return System.Convert.ToInt32(version);*/
-		return 0;
+		if(Application.platform==RuntimePlatform.IPhonePlayer) 
+		{
+			/*string version = NerdFlurry_getFlurryAgentVersion();
+			Debug.Log("version is "+version);
+			if(version!=null)
+				return System.Convert.ToInt32(version);*/
+			return 0;
+		} else {
+			return 0;
+		}
 	}
 	
 	public void LogEvent(string eventId, bool timed=false)
 	{
-		if(timed==false)
-			NerdFlurry_logEvent(eventId);
-		else
-			NerdFlurry_logEventTimed(eventId);
+		if(Application.platform==RuntimePlatform.IPhonePlayer) 
+		{
+			if(timed==false)
+				NerdFlurry_logEvent(eventId);
+			else
+				NerdFlurry_logEventTimed(eventId);
+		}
 	}
 	
 	public void LogEvent(string eventId, Dictionary<string, string> parameters, bool timed=false)
 	{
-		string strParams = "";
-		foreach(KeyValuePair<string, string> kvp in parameters)
-	    {
-			strParams += kvp.Key +"="+kvp.Value+"\n";
+		if(Application.platform==RuntimePlatform.IPhonePlayer) 
+		{
+			string strParams = "";
+			foreach(KeyValuePair<string, string> kvp in parameters)
+		    {
+				strParams += kvp.Key +"="+kvp.Value+"\n";
+			}
+			if(timed==false)
+				NerdFlurry_logEventWithParameters(eventId,strParams);
+			else
+				NerdFlurry_logEventWithParametersTimed(eventId,strParams);
 		}
-		if(timed==false)
-			NerdFlurry_logEventWithParameters(eventId,strParams);
-		else
-			NerdFlurry_logEventWithParametersTimed(eventId,strParams);
 	}
 	
 	public void EndTimedEvent(string eventId)
 	{
-		NerdFlurry_endTimedEvent(eventId);
+		if(Application.platform==RuntimePlatform.IPhonePlayer) 
+		{
+			NerdFlurry_endTimedEvent(eventId);
+		}
 	}
 	
 	public void SetAge(int age)
 	{
-		NerdFlurry_setAge(age);
+		if(Application.platform==RuntimePlatform.IPhonePlayer) 
+		{
+			NerdFlurry_setAge(age);
+		}
 	}
 	
 #else

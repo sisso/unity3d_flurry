@@ -4,7 +4,7 @@ using System.Runtime.InteropServices;
 using System.Collections.Generic;
 
 	
-public class NerdFlurry : MonoBehaviour {
+public class NerdFlurry {
 	
 #if UNITY_ANDROID
 	private AndroidJavaObject mCurrentActivity = null;
@@ -64,34 +64,36 @@ public class NerdFlurry : MonoBehaviour {
 	
 	public void LogEvent (string eventId, Dictionary<string, string> parameters, bool timed=false)
 	{
-		using(AndroidJavaObject obj_HashMap = new AndroidJavaObject("java.util.HashMap")) 
-    	{
-
-	        // Call 'put' via the JNI instead of using helper classes to avoid:
-	        //  "JNI: Init'd AndroidJavaObject with null ptr!"
-	        System.IntPtr method_Put = AndroidJNIHelper.GetMethodID(obj_HashMap.GetRawClass(), "put", 
+		if(Application.platform==RuntimePlatform.Android) {
+			using(AndroidJavaObject obj_HashMap = new AndroidJavaObject("java.util.HashMap")) 
+	    	{
 	
-	            "(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;");
-	
-	        object[] args = new object[2];
-	
-	        foreach(KeyValuePair<string, string> kvp in parameters)
-	        {
-	            using(AndroidJavaObject k = new AndroidJavaObject("java.lang.String", kvp.Key))
-	            {
-	                using(AndroidJavaObject v = new AndroidJavaObject("java.lang.String", kvp.Value))
-	                {
-	                    args[0] = k;
-	                    args[1] = v;
-	                    AndroidJNI.CallObjectMethod(obj_HashMap.GetRawObject(), 
-	                        method_Put, AndroidJNIHelper.CreateJNIArgArray(args));
-	                }
-	            }
-	        }
-			if(timed==false)
-	        	mFlurryClass.CallStatic("logEvent", eventId, obj_HashMap);
-			else
-				mFlurryClass.CallStatic("logEvent", eventId, obj_HashMap,true);
+		        // Call 'put' via the JNI instead of using helper classes to avoid:
+		        //  "JNI: Init'd AndroidJavaObject with null ptr!"
+		        System.IntPtr method_Put = AndroidJNIHelper.GetMethodID(obj_HashMap.GetRawClass(), "put", 
+		
+		            "(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;");
+		
+		        object[] args = new object[2];
+		
+		        foreach(KeyValuePair<string, string> kvp in parameters)
+		        {
+		            using(AndroidJavaObject k = new AndroidJavaObject("java.lang.String", kvp.Key))
+		            {
+		                using(AndroidJavaObject v = new AndroidJavaObject("java.lang.String", kvp.Value))
+		                {
+		                    args[0] = k;
+		                    args[1] = v;
+		                    AndroidJNI.CallObjectMethod(obj_HashMap.GetRawObject(), 
+		                        method_Put, AndroidJNIHelper.CreateJNIArgArray(args));
+		                }
+		            }
+		        }
+				if(timed==false)
+		        	mFlurryClass.CallStatic("logEvent", eventId, obj_HashMap);
+				else
+					mFlurryClass.CallStatic("logEvent", eventId, obj_HashMap,true);
+			}
 		}
 	}
 	

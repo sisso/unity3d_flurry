@@ -7,6 +7,9 @@ public class NerdFlurryUI : MonoBehaviour {
 	
 	private string FLURRY_API_KEY = "YOUR_API_KEY";	
 	private NerdFlurry mNerdFlurry = null;
+	
+	public bool debug = true;
+	
 	// Use this for initialization
 	void Start () {
 		mNerdFlurry = new NerdFlurry();
@@ -23,7 +26,7 @@ public class NerdFlurryUI : MonoBehaviour {
 		
 		if(GUILayout.Button("Start Flurry",GUILayout.Height(60)))
 		{
-			mNerdFlurry.StartSession(FLURRY_API_KEY);
+			mNerdFlurry.StartSession(FLURRY_API_KEY, debug);
 		}
 		if(GUILayout.Button("Agent Version",GUILayout.Height(60)))
 		{

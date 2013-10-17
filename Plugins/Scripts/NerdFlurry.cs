@@ -19,14 +19,14 @@ public class NerdFlurry {
 		}
 	}
 	
-	public void StartSession(string API_KEY)
+	public void StartSession(string API_KEY, bool debug)
 	{
 		if(Application.platform==RuntimePlatform.Android)
 		{
-			mFlurryClass.CallStatic("setLogLevel",2);
-			mFlurryClass.CallStatic("setLogEnabled",true);
-			mFlurryClass.CallStatic("setLogEvents", true);
-				
+			mFlurryClass.CallStatic("setLogEnabled",debug);
+			mFlurryClass.CallStatic("setLogEvents", debug);
+			mFlurryClass.CallStatic("setLogLevel", debug ? 2 : 5);
+			
 			mFlurryClass.CallStatic("setCaptureUncaughtExceptions", true);
 				
 			mFlurryClass.CallStatic("onStartSession", mCurrentActivity,API_KEY);
@@ -78,6 +78,9 @@ public class NerdFlurry {
 		
 		        foreach(KeyValuePair<string, string> kvp in parameters)
 		        {
+					// we ignore null values
+					if (kvp.Value == null) continue;
+					
 		            using(AndroidJavaObject k = new AndroidJavaObject("java.lang.String", kvp.Key))
 		            {
 		                using(AndroidJavaObject v = new AndroidJavaObject("java.lang.String", kvp.Value))
@@ -163,13 +166,13 @@ public class NerdFlurry {
 	
 #endregion
 	
-	public void StartSession(string API_KEY)
+	public void StartSession(string API_KEY, bool debug)
 	{
 		if(Application.platform==RuntimePlatform.IPhonePlayer) 
 		{
-			NerdFlurry_setDebugLogEnabled(true);
-			NerdFlurry_setShowErrorInLogEnabled(true);
-			NerdFlurry_setEventLoggingEnabled(true);
+			NerdFlurry_setDebugLogEnabled(debug);
+			NerdFlurry_setShowErrorInLogEnabled(debug);
+			NerdFlurry_setEventLoggingEnabled(debug);
 			NerdFlurry_startSession(API_KEY);
 		}
 	}
@@ -211,6 +214,8 @@ public class NerdFlurry {
 			string strParams = "";
 			foreach(KeyValuePair<string, string> kvp in parameters)
 		    {
+				// we ignore null values
+				if (kvp.Value == null) continue;
 				strParams += kvp.Key +"="+kvp.Value+"\n";
 			}
 			if(timed==false)
@@ -237,7 +242,7 @@ public class NerdFlurry {
 	}
 	
 #else
-	public void StartSession(string API_KEY)
+	public void StartSession(string API_KEY, bool debug)
 	{
 	
 	}
